@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  db:
+    user: root
+    container_name: sql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+     - 8002:1433
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_SA_PASSWORD=1Secure*Password1
+      - MSQL_PID=Express
+    restart: always
+    networks:
+     - keycloak_network1
+    volumes:
+     - sql_server_data:/var/opt/mssql
+
+  sportbetinc:
+    container_name: sportbetinc-users-api
+    image: ${DOCKER_REGISTRY-}sportbetinc
+    build:
+      context: .
+      dockerfile: SportBetInc/Dockerfile
+    ports:
+      - 8001:80
+    depends_on:
+      - db
+    environment:
+     - DB_HOST=db
+     - DB_NAME=UserDb
+     - DB_SA_PASSWORD=1Secure*Password1
+    networks:
+     - keycloak_network1
+
+volumes:
+  sql_server_data:
+  
+networks:
+  keycloak_network1:
+    external: true
