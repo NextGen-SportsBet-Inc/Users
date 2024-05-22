@@ -14,23 +14,15 @@ namespace SportBetInc.Controllers
     {
         private readonly IUserRepository _userRepository = userRepository;
 
-        [HttpGet("/getAllUsers")]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
-        {
-            var userInfo = await _userRepository.GetAllUsersInfo();
-
-            return Ok(userInfo);
-        }
-
         [Authorize]
         [HttpPost("/addUser")]
-        public async Task<ActionResult<User>> AddUser([FromBody] UserFormDTO user)
+        public async Task<ActionResult> AddUser([FromBody] UserFormDTO user)
         {
             Claim? userClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userClaim == null)
             {
-                return Conflict(new { message = "Can't find ID in user token." });
+                return NotFound(new { message = "Can't find ID in user token." });
             }
             
 
@@ -60,7 +52,29 @@ namespace SportBetInc.Controllers
                 Console.WriteLine(ex);
                 return StatusCode(500, new { mesage = "Error creating user.", details = ex.ToString() });
             }
+        }
+
+
+        [Authorize]
+        [HttpGet("/getUserInfo")]
+        public async Task<ActionResult<User>> GetUserInfo()
+        {
+            Claim? userClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userClaim == null)
+            {
+                return NotFound(new { message = "Can't find ID in user token." });
+            }
+
+            User? user = await _userRepository.GetUserInfoById(userClaim.Value);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            return Ok(user);
 
         }
     }
+
 }

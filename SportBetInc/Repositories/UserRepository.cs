@@ -8,11 +8,6 @@ namespace SportBetInc.Repositories
     {
         private readonly UsersDbContext _userRepository = userRepository;
 
-        public virtual async Task<List<User>> GetAllUsersInfo()
-        {
-            return await _userRepository.Users.ToListAsync();
-        }
-
         public virtual async Task AddUserToDbAsync(User user)
         {
             await _userRepository.Users.AddAsync(user);
