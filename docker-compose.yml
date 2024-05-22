@@ -29,8 +29,8 @@ services:
       - db
     environment:
      - DB_HOST=db
-     - DB_NAME=UserDb
-     - DB_SA_PASSWORD=1Secure*Password1
+     - DB_NAME=${DB_NAME}
+     - DB_SA_PASSWORD=${DB_SA_PASSWORD}
     networks:
      - keycloak_network1
 

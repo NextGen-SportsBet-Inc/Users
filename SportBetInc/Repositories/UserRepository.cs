@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using SportBetInc.Models;
 
 namespace SportBetInc.Repositories
@@ -12,6 +13,16 @@ namespace SportBetInc.Repositories
             return await _userRepository.Users.ToListAsync();
         }
 
+        public virtual async Task AddUserToDbAsync(User user)
+        {
+            await _userRepository.Users.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
+        }
+
+        public virtual async Task<User?> GetUserInfoById(String id)
+        {
+            return await _userRepository.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
 
     }
 }

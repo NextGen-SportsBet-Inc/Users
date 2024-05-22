@@ -5,7 +5,9 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "sportbetinc": "StartDebugging"
-      }
+      },
+      "httpPort": 5000,
+      "sslPort": 5001
     }
   }
 }
