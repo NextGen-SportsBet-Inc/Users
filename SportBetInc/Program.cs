@@ -11,7 +11,7 @@ namespace SportBetInc
     {
         public static void Main(string[] args)
         {
-            DotNetEnv.Env.Load();
+            DotNetEnv.Env.Load("./../.env");
 
             var builder = WebApplication.CreateBuilder(args);
 
