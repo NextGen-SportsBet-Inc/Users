@@ -75,6 +75,36 @@ namespace SportBetInc.Controllers
             return Ok(user);
 
         }
+
+        [Authorize]
+        [HttpDelete("/removeUser")]
+        public async Task<ActionResult<User>> RemoveUser()
+        {
+            Claim? userClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userClaim == null)
+            {
+                return NotFound(new { message = "Can't find ID in user token." });
+            }
+
+            User? user = await _userRepository.GetUserInfoById(userClaim.Value);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            try
+            {
+                _userRepository.RemoveUser(user);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(new { message = "Error deleting user from database.", error = ex.ToString() });
+            }
+
+            return Ok(new { message = "User removed successfully." });
+
+        }
     }
 
 }

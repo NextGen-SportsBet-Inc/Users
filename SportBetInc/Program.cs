@@ -1,4 +1,4 @@
-using Keycloak.AuthServices.Authentication;
+﻿using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
@@ -11,7 +11,7 @@ namespace SportBetInc
     {
         public static void Main(string[] args)
         {
-            DotNetEnv.Env.Load("./../.env");
+            DotNetEnv.Env.Load(".env");
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +20,8 @@ namespace SportBetInc
             builder.Services.AddControllers();
 
             // Database context injection
+            Console.WriteLine("host --------------------------------------------------------------");
+            Console.WriteLine(Environment.GetEnvironmentVariable("DB_NAME"));
             var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
@@ -73,6 +75,13 @@ namespace SportBetInc
                         new string[]{}
                     }
                 });
+
+                opt.DocInclusionPredicate((docName, apiDesc) =>
+                {
+                    var home_dir = Environment.GetEnvironmentVariable("HOME_DIR");
+                    apiDesc.RelativePath = home_dir + apiDesc.RelativePath;
+                    return true;
+                });
             });
 
             var app = builder.Build();
@@ -80,7 +89,10 @@ namespace SportBetInc
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                var home_dir = Environment.GetEnvironmentVariable("HOME_DIR");
+
                 app.UseSwagger();
+
                 app.UseSwaggerUI();
             }
 
