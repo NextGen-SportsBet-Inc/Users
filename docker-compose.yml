@@ -1,9 +1,10 @@
 version: '3.4'
 
 services:
-  db:
+  users_db:
     user: root
-    container_name: sql_server
+    hostname: users_db
+    container_name: users_sql_server
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
      - 8002:1433
@@ -26,14 +27,14 @@ services:
     ports:
       - 5001:5001
     depends_on:
-      - db
+      - users_db
     networks:
      - microservice-network
     env_file:
      - .env
 
 volumes:
-  sql_server_data:
+  sql_server_data: 
   
 networks:
   microservice-network:

@@ -24,7 +24,6 @@ namespace SportBetInc.Controllers
             {
                 return NotFound(new { message = "Can't find ID in user token." });
             }
-            
 
             if (user == null) {
                 return BadRequest(new {message = "User cannot be null."});

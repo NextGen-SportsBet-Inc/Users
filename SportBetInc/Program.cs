@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using SportBetInc.Repositories;
+using MassTransit;
+using SportBetInc.Consumer;
 
 namespace SportBetInc
 {
@@ -16,12 +18,28 @@ namespace SportBetInc
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
- 
+            builder.Services.AddMassTransit(x =>
+            {
+                x.SetKebabCaseEndpointNameFormatter();
+
+                x.AddConsumer<VerifyUserConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(new Uri("" + Environment.GetEnvironmentVariable("RabbitMQConnectionURI")), h =>
+                    {
+                        h.Username("" + Environment.GetEnvironmentVariable("RabbitUser"));
+                        h.Password("" + Environment.GetEnvironmentVariable("RabbitPassword"));
+                    });
+
+                    cfg.ConfigureEndpoints(context);
+                });
+
+            });
+
             builder.Services.AddControllers();
 
             // Database context injection
-            Console.WriteLine("host --------------------------------------------------------------");
-            Console.WriteLine(Environment.GetEnvironmentVariable("DB_NAME"));
             var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
@@ -89,10 +107,7 @@ namespace SportBetInc
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                var home_dir = Environment.GetEnvironmentVariable("HOME_DIR");
-
                 app.UseSwagger();
-
                 app.UseSwaggerUI();
             }
 
