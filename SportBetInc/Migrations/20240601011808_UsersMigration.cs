@@ -2,8 +2,6 @@
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace SportBetInc.Migrations
 {
     /// <inheritdoc />
@@ -24,16 +22,6 @@ namespace SportBetInc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Email", "FirstName", "LastName" },
-                values: new object[,]
-                {
-                    { "id1", "robertamatias@gmail.com", "Roberta", "Matias" },
-                    { "id2", "fernandomendes@gmail.com", "Fernando", "Mendes" },
-                    { "id3", "mariafernandes@gmail.com", "Maria", "Fernandes" }
                 });
         }
 

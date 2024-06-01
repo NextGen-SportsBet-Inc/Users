@@ -6,8 +6,7 @@
       "serviceActions": {
         "sportbetinc": "StartDebugging"
       },
-      "httpPort": 5000,
-      "sslPort": 5001
+      "httpPort": 5000
     }
   }
 }

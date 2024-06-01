@@ -6,6 +6,10 @@ using Microsoft.OpenApi.Models;
 using SportBetInc.Repositories;
 using MassTransit;
 using SportBetInc.Consumer;
+using SportBetInc.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace SportBetInc
 {
@@ -43,7 +47,7 @@ namespace SportBetInc
             var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
-            var connectionString = $"Data Source={dbHost};Initial Catalog={dbName}; User ID=sa;Password={dbPassword}; TrustServerCertificate=True";
+            var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName}; User ID=sa; Password={dbPassword}; TrustServerCertificate=True";
             builder.Services.AddDbContext<UsersDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
@@ -117,6 +121,17 @@ namespace SportBetInc
             app.UseHttpsRedirection();
 
             app.MapControllers();
+
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+
+                if ((db.Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator service) && (!service.Exists()))
+                {
+                    db.Database.Migrate();
+                }
+            }
 
             app.Run();
         }

@@ -2,21 +2,20 @@ version: '3.4'
 
 services:
   users_db:
-    user: root
-    hostname: users_db
-    container_name: users_sql_server
+    container_name: users_db_container
+    hostname: users_db_host
     image: mcr.microsoft.com/mssql/server:2022-latest
-    ports:
-     - 8002:1433
     environment:
-      - ACCEPT_EULA=y
+      - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${DB_SA_PASSWORD}
       - MSQL_PID=Express
     restart: always
     networks:
-     - microservice-network
+     - user-microservice
     volumes:
-     - sql_server_data:/var/opt/mssql
+     - user_server_data:/var/opt/mssql
+    env_file:
+     - .env
 
   sportbetinc:
     container_name: sportbetinc-users-api
@@ -25,17 +24,20 @@ services:
       context: .
       dockerfile: SportBetInc/Dockerfile
     ports:
-      - 5001:5001
+      - 5000:5000
+    networks:
+      - microservice-network
+      - user-microservice
     depends_on:
       - users_db
-    networks:
-     - microservice-network
+    restart: always
     env_file:
      - .env
 
 volumes:
-  sql_server_data: 
+  user_server_data: 
   
 networks:
   microservice-network:
     external: true
+  user-microservice:

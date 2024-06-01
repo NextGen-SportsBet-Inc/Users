@@ -40,29 +40,6 @@ namespace SportBetInc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "id1",
-                            Email = "robertamatias@gmail.com",
-                            FirstName = "Roberta",
-                            LastName = "Matias"
-                        },
-                        new
-                        {
-                            Id = "id2",
-                            Email = "fernandomendes@gmail.com",
-                            FirstName = "Fernando",
-                            LastName = "Mendes"
-                        },
-                        new
-                        {
-                            Id = "id3",
-                            Email = "mariafernandes@gmail.com",
-                            FirstName = "Maria",
-                            LastName = "Fernandes"
-                        });
                 });
 #pragma warning restore 612, 618
         }

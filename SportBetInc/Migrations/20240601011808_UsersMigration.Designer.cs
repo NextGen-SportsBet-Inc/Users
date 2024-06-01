@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SportBetInc.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20240531153306_UsersMigration")]
+    [Migration("20240601011808_UsersMigration")]
     partial class UsersMigration
     {
         /// <inheritdoc />
@@ -43,29 +43,6 @@ namespace SportBetInc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "id1",
-                            Email = "robertamatias@gmail.com",
-                            FirstName = "Roberta",
-                            LastName = "Matias"
-                        },
-                        new
-                        {
-                            Id = "id2",
-                            Email = "fernandomendes@gmail.com",
-                            FirstName = "Fernando",
-                            LastName = "Mendes"
-                        },
-                        new
-                        {
-                            Id = "id3",
-                            Email = "mariafernandes@gmail.com",
-                            FirstName = "Maria",
-                            LastName = "Fernandes"
-                        });
                 });
 #pragma warning restore 612, 618
         }
