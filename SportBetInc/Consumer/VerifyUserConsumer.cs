@@ -35,6 +35,8 @@ namespace SportBetInc.Consumer
             response.UserIsValid = true;
 
             await context.RespondAsync(response);
+
+            return;
         }
     }
 
