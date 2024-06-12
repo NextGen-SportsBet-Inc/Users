@@ -6,10 +6,13 @@ using Microsoft.OpenApi.Models;
 using SportBetInc.Repositories;
 using MassTransit;
 using SportBetInc.Consumer;
-using SportBetInc.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 
 namespace SportBetInc
 {
@@ -20,6 +23,44 @@ namespace SportBetInc
             DotNetEnv.Env.Load(".env");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            //open telemetry stuff
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddOpenTelemetry(options =>
+            {
+                options.AddOtlpExporter(otlpOptions =>
+                {
+                    otlpOptions.Endpoint = new Uri("http://otel-collector:4317");
+                });
+            });
+
+            static void addResource(ResourceBuilder resourceBuilder)
+            {
+                resourceBuilder.AddService("UsersAPI");
+            }
+
+            builder.Services
+                .AddOpenTelemetry()
+                .ConfigureResource(addResource)
+                .WithTracing(tracerBuilder => tracerBuilder
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://otel-collector:4317");
+                    })
+                )
+                .WithMetrics(meterBuilder => meterBuilder
+                    .AddProcessInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://otel-collector:4317");
+                    })
+            );
 
             // Add services to the container.
             builder.Services.AddMassTransit(x =>
