@@ -8,6 +8,5 @@ namespace SportBetInc.Repositories
 
         Task<User?> GetUserInfoById(String id);
 
-        void RemoveUser(User user);
     }
 }

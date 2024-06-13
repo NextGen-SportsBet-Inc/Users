@@ -19,10 +19,5 @@ namespace SportBetInc.Repositories
             return await _userContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public virtual void RemoveUser(User user)
-        {
-            _userContext.Users.Remove(user);
-        }
-
     }
 }

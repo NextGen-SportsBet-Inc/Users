@@ -31,7 +31,7 @@ namespace SportBetInc
             {
                 options.AddOtlpExporter(otlpOptions =>
                 {
-                    otlpOptions.Endpoint = new Uri("http://otel-collector:4317");
+                    otlpOptions.Endpoint = new Uri("" + Environment.GetEnvironmentVariable("OTEL_uri"));
                 });
             });
 
@@ -48,7 +48,7 @@ namespace SportBetInc
                     .AddHttpClientInstrumentation()
                     .AddOtlpExporter(opt =>
                     {
-                        opt.Endpoint = new Uri("http://otel-collector:4317");
+                        opt.Endpoint = new Uri("" + Environment.GetEnvironmentVariable("OTEL_uri"));
                     })
                 )
                 .WithMetrics(meterBuilder => meterBuilder
@@ -58,7 +58,7 @@ namespace SportBetInc
                     .AddAspNetCoreInstrumentation()
                     .AddOtlpExporter(opt =>
                     {
-                        opt.Endpoint = new Uri("http://otel-collector:4317");
+                        opt.Endpoint = new Uri("" + Environment.GetEnvironmentVariable("OTEL_uri"));
                     })
             );
 
