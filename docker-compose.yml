@@ -1,21 +1,26 @@
 version: '3.4'
 
 services:
-  db:
-    user: root
-    container_name: sql_server
+  users_db:
+    container_name: users_db_container
+    hostname: users_db_host
     image: mcr.microsoft.com/mssql/server:2022-latest
-    ports:
-     - 8002:1433
     environment:
-      - ACCEPT_EULA=y
+      - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${DB_SA_PASSWORD}
       - MSQL_PID=Express
+    healthcheck:
+      test: [ "CMD-SHELL","/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${DB_SA_PASSWORD} -Q 'SELECT 1'" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
     networks:
-     - keycloak_network1
+     - user-microservice
     volumes:
-     - sql_server_data:/var/opt/mssql
+     - user_server_data:/var/opt/mssql
+    env_file:
+     - .env
 
   sportbetinc:
     container_name: sportbetinc-users-api
@@ -25,21 +30,20 @@ services:
       dockerfile: SportBetInc/Dockerfile
     ports:
       - 5000:5000
-      - 5001:5001
-    depends_on:
-      - db
-    environment:
-     - DB_HOST=db
-     - DB_NAME=${DB_NAME}
-     - DB_SA_PASSWORD=${DB_SA_PASSWORD}
     networks:
-     - keycloak_network1
+      - microservice-network
+      - user-microservice
+    depends_on:
+      users_db:
+        condition: service_healthy
+    restart: always
     env_file:
      - .env
 
 volumes:
-  sql_server_data:
+  user_server_data: 
   
 networks:
-  keycloak_network1:
+  microservice-network:
     external: true
+  user-microservice:
